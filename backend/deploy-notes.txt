@@ -1,0 +1,16 @@
+https://developer.mongodb.com/how-to/use-atlas-on-heroku/
+https://www.freecodecamp.org/news/how-to-deploy-a-nodejs-app-to-heroku-from-github-without-installing-heroku-on-your-machine-433bec770efe/
+https://stackoverflow.com/questions/42860703/how-to-use-selenium-webdriver-on-heroku
+
+
+Config in Heroku dashboard:
+Settings -> Add buildpacks -> https://github.com/heroku/heroku-buildpack-chromedriver -> Save changes
+Settings -> Add buildpacks -> https://github.com/heroku/heroku-buildpack-google-chrome -> Save changes
+
+
+
+https://www.andressevilla.com/running-chromedriver-with-python-selenium-on-heroku/
+https://stackoverflow.com/questions/54014170/heroku-and-selenium-webdriver-not-working-together
+https://stackoverflow.com/questions/54181339/how-do-i-install-chromedriver-in-a-specific-directory-app-assets-chromedriver/56648980#56648980
+https://www.javaer101.com/en/article/54661387.html
+https://stackoverflow.com/questions/26241495/how-do-i-wait-for-an-element-to-be-clickable-in-webdriverjs

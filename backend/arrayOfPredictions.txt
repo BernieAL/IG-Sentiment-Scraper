@@ -1,0 +1,19 @@
+[
+  '{"label":"identity_attack","results":[
+      {"probabilities":{"0":0.9659663438796997,"1":0.034033700823783875},"match":false},
+      {"probabilities":{"0":0.9921950101852417,"1":0.00780494324862957},"match":false},
+      {"probabilities":{"0":0.9999512434005737,"1":0.000048760874051367864},"match":false}
+   ]}',
+
+  '{"label":"insult","results":[
+      {"probabilities":{"0":0.0812470093369484,"1":0.9187529683113098},"match":true},
+      {"probabilities":{"0":0.9633523225784302,"1":0.036647673696279526},"match":false},
+      {"probabilities":{"0":0.999562680721283,"1":0.0004372781259007752},"match":false}]}',
+
+  '{"label":"obscene","results":[
+      {"probabilities":{"0":0.3993155360221863,"1":0.6006844639778137},"match":null},{"probabilities":{"0":0.9984427094459534,"1":0.0015573396813124418},"match":false},{"probabilities":{"0":0.999913215637207,"1":0.00008679015445522964},"match":false}]}',
+  '{"label":"severe_toxicity","results":[{"probabilities":{"0":0.9970394968986511,"1":0.0029604362789541483},"match":false},{"probabilities":{"0":0.999996542930603,"1":0.000003515783646435011},"match":false},{"probabilities":{"0":1,"1":4.7531660385402574e-8},"match":false}]}',
+  '{"label":"sexual_explicit","results":[{"probabilities":{"0":0.7053253650665283,"1":0.2946746349334717},"match":null},{"probabilities":{"0":0.9995667338371277,"1":0.0004332040261942893},"match":false},{"probabilities":{"0":0.9999327659606934,"1":0.00006722353282384574},"match":false}]}',
+  '{"label":"threat","results":[{"probabilities":{"0":0.910673975944519,"1":0.08932600915431976},"match":false},{"probabilities":{"0":0.9976200461387634,"1":0.002379966201260686},"match":false},{"probabilities":{"0":0.9998364448547363,"1":0.0001634958607610315},"match":false}]}',
+  '{"label":"toxicity","results":[{"probabilities":{"0":0.031176742166280746,"1":0.9688233137130737},"match":true},{"probabilities":{"0":0.9092447757720947,"1":0.0907551497220993},"match":false},{"probabilities":{"0":0.9989499449729919,"1":0.0010500926291570067},"match":false}]}'
+]
