@@ -1,0 +1,73 @@
+[ 
+    {
+        "id": 1,
+        "title": "Kylie_Jenner",
+        "content": "Social Media Public Figure",
+        "disclaimer": "*Disclaimer: This user may have comment filtering turned on",
+        "slug": "hello-world",
+        "img" : "https://ilarge.lisimg.com/image/16801290/1080full-kylie-jenner.jpg",
+        "banner" : "https://i.pinimg.com/originals/a5/2b/96/a52b963809c7e64e538b113cccf61dda.jpg",
+        "handle": "@kyliejenner",
+        "handlelink" : "https://www.instagram.com/kyliejenner/"
+    },
+    {
+
+    "id": 2,
+    "title": "Kim_Kardashian",
+    "content": "Social Media Public Figure",
+    "disclaimer": "*Disclaimer: This user may have comment filtering turned on",
+    "slug": "hello-world",
+    "img": "https://i.pinimg.com/originals/e9/1a/33/e91a3373b55e59368527f063e363daee.jpg",
+    "banner" : "https://images.ulta.com/is/image/Ulta/bn_kkwbeauty?scl=1",
+    "handle": "@kimkardashian",
+    "handlelink" : "https://www.instagram.com/kimkardashian/"
+    },
+
+        {
+            "id": 3,
+            "title": "The_Rock",
+            "content": "Professional Wrestler",
+            "disclaimer": "*Disclaimer: This user may have comment filtering turned on",
+            "slug": "hello-world",
+            "img" : "https://i1.wp.com/tnwtlmovement.com/wp-content/uploads/2020/03/img_1942-1.jpg?fit=728%2C728&ssl=1",
+            "banner" : "https://sparxentertainment.files.wordpress.com/2016/05/therock_banner.png",
+            "handle": "@therock",
+            "handlelink" : "https://www.instagram.com/therock/"
+        },
+
+        {
+            "id": 4,
+            "title": "Cristiano_Ronaldo",
+            "content": "Professional Soccer Player",
+            "disclaimer": "*Disclaimer: This user has a large international fan base. Only English comments were analyzed. VAMOS!",
+            "slug": "hello-world",
+            "img" : "https://live.staticflickr.com/3882/14404364778_7839d5398e_b.jpg",
+            "banner" : "https://d107a8nc3g2c4h.cloudfront.net/blog/wp-content/uploads/2018/05/CR7-blog-banner.jpg",
+            "handle": "@cristiano",
+            "handlelink" : "https://www.instagram.com/cristiano/"
+        },
+
+        {
+            "id": 5,
+            "title": "Jake_Paul",
+            "content": "Youtube Content Creator",
+            "disclaimer": "*Disclaimer: This user may have comment filtering turned on",
+            "slug": "hello-world",
+            "img" : "https://pyxis.nymag.com/v1/imgs/0f6/2a3/d126960e46ea4b38f3d0332ee01d431ee6-jake-paul.rvertical.w1200.jpg",
+            "banner" : "https://img.ibxk.com.br/2018/03/30/30181422864019.jpg?w=1120&h=420&mode=crop&scale=both",
+            "handle": "@jakepaul",
+            "handlelink" : "https://www.instagram.com/jakepaul/"
+        },
+
+        {
+            "id": 6,
+            "title": "Jeffree_Star",
+            "content": "Beauty Guru/Youtube Content Creator",
+            "disclaimer": "*Disclaimer: This user could have comment filtering turned on",
+            "slug": "hello-world",
+            "img" : "https://i.pinimg.com/originals/a8/ed/88/a8ed88c19e5e5876b293f032d25f0a07.jpg",
+            "banner" : "https://cdn.shopify.com/s/files/1/0737/8455/files/589_JSC_Blood_Lust_Collection_Medium_Banner_D_Blank_1400x.jpg?v=1582239983",
+            "handle": "@jeffreestar",
+            "handlelink" : "https://www.instagram.com/jeffreestar/"
+        }
+]
