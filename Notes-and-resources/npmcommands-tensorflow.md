@@ -1,0 +1,12 @@
+commands to install tensorflow and all that
+
+
+
+
+npm install @tensorflow/tfjs-node
+npm install @tensorflow/tfjs @tensorflow-models/toxicity
+npm install selenium-webdriver -g
+
+in cmd as admin
+    npm install --g --production windows-build-tools
+https://stackoverflow.com/questions/57541402/node-gyp-configure-got-gyp-err-find-vs/63311413#63311413

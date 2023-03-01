@@ -1,0 +1,36 @@
+username and pw for celebs db
+        admin, 123
+
+
+//db connection properties file
+    require('dotenv').config()
+    const mongoose = require('mongoose')
+
+    mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser:true})
+    const db = mongoose.connection
+    db.on('error',(error)=> console.log(error))
+    db.once('open', ()=>console.log('connected to Database'))
+
+
+//.env file
+    DATABASE_URL = mongodb://localhost/celebs
+
+//npm commands:
+    npm mongoose
+    npm dotenv 
+
+
+
+//create schema under new folder called 'models'
+//schema is celebs.js
+    const mongoose = require('mongoose')
+
+    const celebSchema = new mongoose.Schema({
+        title: {
+
+        }
+    })
+
+    module.exports = mongoose.model('celeb',celebSchema)
+
+//get connection string from mongodb cloud site and paste into compass app

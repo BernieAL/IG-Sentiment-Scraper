@@ -55,13 +55,16 @@ async function main_scrape_func(un,pw,celebChoice){
       loginButton.click();
 
     //to clear save login info by clicking "not now"
-        await driver.sleep(2000)
-        const saveLoginInfoButton = await driver.wait(until.elementLocated(By.className('cmbtv')),3000);
-        await saveLoginInfoButton.click();
+        // await driver.sleep(2000)
+        // const saveLoginInfoButton = await driver.wait(until.elementLocated(By.className('cmbtv')),3000);
+        // await saveLoginInfoButton.click();
 
     //to clear turn on post notif button
       await driver.sleep(1000)
-      const postNotifButton =  await driver.wait(until.elementLocated(By.className('aOOlW   HoLwm ')));
+      // need to element by text containing 'not now'
+      const postNotifButton =  driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Not Now')]")));
+      // const postNotifButton =  await driver.wait(until.elementLocated(By.className('aOOlW   HoLwm ')));
+
       await postNotifButton.click();
       
 
@@ -81,14 +84,14 @@ async function main_scrape_func(un,pw,celebChoice){
 
     //clicking first post
       await driver.sleep(2000)
-      const latestPost = await driver.findElement(By.css('#react-root > section > main > div > div._2z6nI > article > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1)'))
+      const latestPost = await driver.findElement(By.className('_aabd _aa8k _aanf'))
       await latestPost.click()
 
 
 
     //get the name of the person and store in file. use unshift to store append to the beginning of the array, then use unshift on the latestPostDate
     //body > div._2dDPU.CkGkG > div.zZYga > div > article > header > div.o-MQd > div.PQo_0 > div.e1e1d > span > a
-    let userName = await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > header > div.o-MQd > div.PQo_0 > div.e1e1d > span > a'))).getAttribute('innerText')
+    let userName = await driver.wait(By.className('_aacl _aaco _aacw _aacx _aad6 _aade')).getAttribute('innerText')
     let userNameAsString = 'Username: ' + userName + '|'
     fs.appendFile('comments.txt',userNameAsString,(err)=>{
       if(err){
@@ -228,10 +231,10 @@ async function main_scrape_func(un,pw,celebChoice){
     return returnedComments
  } 
  
-//  var UN ='SentiScrape';
-//  var PW ='kirklandExpo';
-//  let celebChoice =  'cristiano'
-// runScraper(UN,PW,celebChoice)
+ var UN ='SentiScrape';
+ var PW ='kirklandExpo';
+ let celebChoice =  'cristiano'
+runScraper(UN,PW,celebChoice)
 
 //======================================================
 

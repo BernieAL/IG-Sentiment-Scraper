@@ -1,23 +1,29 @@
 
 const scraper = require('./insta-scrape-test.js')
-const AI = require('./AI-script2.js')
-const express = require('express')
-const fs = require('fs').promises
-const emojiStrip = require('emoji-strip');
-const e = require('express');
-const { until, promise } = require('selenium-webdriver');
 const { run } = require('./insta-scrape-test.js');
+
+
+const AI = require('./AI-script2.js')
 const AIScript2 = require('./AI-script2.js');
-const chalk = require('chalk')
-const celebRecord = require('./models/celebRecordSchema')
+
 const cors = require('cors');
 const nodemon = require('nodemon');
+const express = require('express')
+const e = require('express');
+
+const fs = require('fs').promises
+const emojiStrip = require('emoji-strip');
 
 
-//custom module imports
-// const dbFunc = require('./modules/DB-functions')
-// const textFunc = require('./modules/Text-processing')
-// const dateFunc = require('./modules/date-functions')
+const { until, promise } = require('selenium-webdriver');
+
+
+const chalk = require('chalk')
+const celebRecord = require('./models/celebRecordSchema')
+
+
+
+
 
 var UN ='SentiScrape';
 var PW ='kirklandExpo';
@@ -29,7 +35,7 @@ var PW ='kirklandExpo';
 require('dotenv').config()
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser:true,useUnifiedTopology:true})
+mongoose.connect('mongodb+srv://admin:123@cluster0.hyhot.mongodb.net/celebs?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology:true})
 const db = mongoose.connection
 db.on('error',(error)=> console.log(chalk.redBright('Not able to connect: ' + error)))
 db.once('open', ()=>{})
@@ -51,7 +57,6 @@ app.get('/',(req,res)=>{
 app.get('/search',(req,res)=>{
     
 
-
             const celebHandle = req.query.celebhandle
 
             console.log(typeof(celebHandle))
@@ -63,10 +68,6 @@ app.get('/search',(req,res)=>{
                 console.log(needNewScrape)
                 if(needNewScrape){
                     console.log(chalk.red('::::Info outdated, Beginning New Scrape and Sentiment Analysis::::'))
-                    
-
-                    //clear file from prev run or clear at the end?
-                    //clearCommentsFile
 
                     let scrapedComments = await getAndProcessComments(UN,PW,celebChoice)
                     let cleanedComments = cleanComments(scrapedComments)
@@ -167,7 +168,7 @@ async function mainDemo(celebHandle){
         //const response = {}
     }
 }
-//mainDemo(celebHandle)
+mainDemo(celebHandle)
 
 //============================================================
 async function getAndProcessComments (UN,PW,celebChoice){

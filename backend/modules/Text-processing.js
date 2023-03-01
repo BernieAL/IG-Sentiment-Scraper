@@ -5,7 +5,7 @@ const dateFunc = require('./date-functions')
 
 
 //TEXT PROCESSING METHODS
-/* COMMENT PREPROCESSING BEFORE PASSING TO AI */
+/* COMMENT PREPROCESSING BEFORE PASSING TO MODEL */
 function cleanComments(comments){
     let noSymbols = symStripFunc(JSON.stringify(comments))    //non alphanumeric symbols removed
     let noEmojis = emojiStrip(noSymbols)  //removes emojis, might be redundant because symStringFunc did it but just as a double measure.
