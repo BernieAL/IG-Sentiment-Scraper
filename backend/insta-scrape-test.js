@@ -42,16 +42,18 @@ async function main_scrape_func(un,pw,celebChoice){
       await driver.get('https://instagram.com');
       await driver.sleep(2000)
 
-      const username = await driver.wait(until.elementLocated(By.name('username')),1000);
+      // locate username element and enter credentials
+      const username = await driver.wait(until.elementLocated(By.name('username')),2000);
       username.sendKeys(un) 
       //username.sendKeys('bhurnalcodes') 
       
-      const password = await driver.wait(until.elementLocated(By.name('password')),1000);
+      // locate password element and enter credentials
+      const password = await driver.wait(until.elementLocated(By.name('password')),2000);
       password.sendKeys(pw) 
       //password.sendKeys('s15koukie39') 
 
       await driver.sleep(2000)
-      const loginButton = await driver.wait(until.elementLocated(By.css('#loginForm > div > div:nth-child(3) > button')),2000);
+      const loginButton = await driver.wait(until.elementLocated(By.css('#loginForm > div > div:nth-child(3) > button')),3000);
       loginButton.click();
 
     //to clear save login info by clicking "not now"
@@ -62,7 +64,7 @@ async function main_scrape_func(un,pw,celebChoice){
     //to clear turn on post notif button
       await driver.sleep(1000)
       // need to element by text containing 'not now'
-      const postNotifButton =  driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Not Now')]")));
+      const postNotifButton =  driver.wait(until.elementLocated(By.xpath("//*[contains(text(), 'Not Now')]")),2000);
       // const postNotifButton =  await driver.wait(until.elementLocated(By.className('aOOlW   HoLwm ')));
 
       await postNotifButton.click();
@@ -91,44 +93,60 @@ async function main_scrape_func(un,pw,celebChoice){
 
     //get the name of the person and store in file. use unshift to store append to the beginning of the array, then use unshift on the latestPostDate
     //body > div._2dDPU.CkGkG > div.zZYga > div > article > header > div.o-MQd > div.PQo_0 > div.e1e1d > span > a
-    let userName = await driver.wait(By.className('_aacl _aaco _aacw _aacx _aad6 _aade')).getAttribute('innerText')
-    let userNameAsString = 'Username: ' + userName + '|'
-    fs.appendFile('comments.txt',userNameAsString,(err)=>{
-      if(err){
-        console.log(err)
-      }
-    })
+    // let userName = await driver.findElement(By.className('xt0psk2'))
+    // let text = await userName.getText()
+    // console.log(text)
+    // // let userNameAsString = 'Username: ' + userName + '|'
+    // // fs.appendFile('comments.txt',userNameAsString,(err)=>{
+    // //   if(err){
+    // //     console.log(err)
+    // //   }
+    // // })
 
-
-    //get date of latest post and write to comments.txt   
-      let latestPostDate =  await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.k_Q0X.I0_K8.NnvRN > a > time'))).getAttribute('datetime')
-      let latestPostDateAsString = 'LATEST POST: ' + latestPostDate + '|'
-      fs.appendFile('comments.txt',latestPostDateAsString,(err)=>{
+      let userNameAsString = 'Username: ' + celebChoice + '|'
+      fs.appendFile('comments.txt',userNameAsString,(err)=>{
         if(err){
           console.log(err)
         }
+        chalk.red('successfully wrote username to file')
       })
+
+    //get date of latest post and write to comments.txt
+
+    try {
+      let latestPostDate = await driver.wait(until.elementLocated(By.className('_aaqe'),2000)).getAttribute('datetime')  
+      console.log(latestPostDate)
+      let latestPostDateAsString = 'LATEST POST: ' + latestPostDate + '|'
+      fs.appendFile('comments.txt', latestPostDateAsString, (err) => {
+        if (err) {
+          console.log(err)
+        }
+      })
+      console.log(chalk.red('successfully wrote retrieved and wrote date to file'))
+    } catch (err) {
+      console.log('An error occurred while running the code:', err.message)
+    }
       
-      async function scrapeComments(num){
-          let i = 0
-          while(i < num){
-            //comments = await scrapeCommentsFromPost(driver)
-            let postNum = 'POST NUM: ' + i
-            let postComments = await scrapeCommentsFromPost(driver)
-            let numberedScrape = postNum + '~~~~~' + postComments
-            let tempArr = [numberedScrape]
-            comments = tempArr
-            driver.sleep(Math.random() * 2000)
-            //console.log(comments)
-            await writeToFile(comments)
-            nextPost(driver)
-            i++;
-          }
-      }
-       await scrapeComments(5) //POST NUM HERE !!! //hardcoded number of posts to get (2) chosen for testing, should be dynamically fed
-       console.log(chalk.red(':::::DONE::::::'))
-       comments.unshift(latestPostDateAsString)
-       return comments;
+    async function scrapeComments(num){
+        let i = 0
+        while(i < num){
+          //comments = await scrapeCommentsFromPost(driver)
+          let postNum = 'POST NUM: ' + i
+          let postComments = await scrapeCommentsFromPost(driver)
+          let numberedScrape = postNum + '~~~~~' + postComments
+          let tempArr = [numberedScrape]
+          comments = tempArr
+          driver.sleep(Math.random() * 2000)
+          //console.log(comments)
+          await writeToFile(comments)
+          nextPost(driver)
+          i++;
+        }
+    }
+    await scrapeComments(5) //POST NUM HERE !!! //hardcoded number of posts to get (2) chosen for testing, should be dynamically fed
+    console.log(chalk.red(':::::DONE::::::'))
+    comments.unshift(latestPostDateAsString)
+    return comments;
 }
 //=================================================================================================
      
@@ -231,7 +249,7 @@ async function main_scrape_func(un,pw,celebChoice){
     return returnedComments
  } 
  
- var UN ='SentiScrape';
+ var UN ='sentiscrape';
  var PW ='kirklandExpo';
  let celebChoice =  'cristiano'
 runScraper(UN,PW,celebChoice)
