@@ -36,25 +36,71 @@ const chalk = require('chalk')
 let comments = []
 
 
+/*
+  This function is called for each element we attempt to find
+  If element is found, it will display - FOUND element_name
+  If element isnt found, it will display - NOT FOUND element_name
+  
+  It recieves the web element object we are searching for located by driver.
+  Ex. 
+      const loginForm = await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
+      element_status(element)
+
+      Then in element_status
+      Ex. Recieves element
+          prints (Object.keys(argument.callee)[0]) which would print the name of the var passed to the function
+          Ex. prints ('loginForm')
+
+
+*/
+async function element_status(element){
+  if (element) {
+    // If element is found, log its details
+    console.log(chalk.green('Element found: ' + Object.keys(arguments)));
+    console.log(chalk.green('Tag name:', await element.getTagName()));
+    console.log(chalk.green('Id:', await element.getAttribute('id')));
+    console.log(chalk.green('Class:', await element.getAttribute('class')));
+    console.log(chalk.green('Text:', await element.getText()));
+  } else {
+    // If element is not found, log a message
+    console.log(chalk.red('Element not found'));
+  }
+}
+
+
+
 async function main_scrape_func(un,pw,celebChoice){
       let driver = await new Builder().forBrowser('chrome').build();
     
       await driver.get('https://instagram.com');
       await driver.sleep(2000)
 
-      // locate username element and enter credentials
-      const username = await driver.wait(until.elementLocated(By.name('username')),2000);
-      username.sendKeys(un) 
-      //username.sendKeys('bhurnalcodes') 
+      // // locate username element and enter credentials
+      // const username = await driver.wait(until.elementLocated(By.name('username')),2000);
+      // username.sendKeys(un) 
+      // //username.sendKeys('bhurnalcodes') 
       
-      // locate password element and enter credentials
-      const password = await driver.wait(until.elementLocated(By.name('password')),2000);
-      password.sendKeys(pw) 
-      //password.sendKeys('s15koukie39') 
+      // // locate password element and enter credentials
+      // const password = await driver.wait(until.elementLocated(By.name('password')),2000);
+      // password.sendKeys(pw) 
+      // //password.sendKeys('s15koukie39') 
 
-      await driver.sleep(2000)
-      const loginButton = await driver.wait(until.elementLocated(By.css('#loginForm > div > div:nth-child(3) > button')),3000);
-      loginButton.click();
+      // // Locate 'login' button and click
+      // await driver.sleep(2000)
+      // // const loginButton = await driver.wait(until.elementLocated(By.css('#loginForm > div > div:nth-child(3) > button')),5000);
+      // const loginButton = await driver.findElement(until.elementLocated(By.xpath("//button[contains(text(),'Log in')")),8000);
+      
+      const loginForm = await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
+      element_status(loginForm)
+      // const U_name = await driver.wait(until.elementLocated(By.name('username'),2000))
+      // element_status(U_name)
+      // U_name.sendKeys(un)
+      // const p_word = await driver.wait(until.elementLocated(By.name('password')),2000);
+      // element_status(p_word)
+      // p_word.sendKeys(pw)
+      
+      // loginButton.click();
+      //*[@id="loginForm"]/div/div[3]/button/div
 
     //to clear save login info by clicking "not now"
         // await driver.sleep(2000)
@@ -104,7 +150,7 @@ async function main_scrape_func(un,pw,celebChoice){
     // // })
 
       let userNameAsString = 'Username: ' + celebChoice + '|'
-      fs.appendFile('comments.txt',userNameAsString,(err)=>{
+      fs.appendFile('raw_comments.txt',userNameAsString,(err)=>{
         if(err){
           console.log(err)
         }
@@ -117,7 +163,7 @@ async function main_scrape_func(un,pw,celebChoice){
       let latestPostDate = await driver.wait(until.elementLocated(By.className('_aaqe'),2000)).getAttribute('datetime')  
       console.log(latestPostDate)
       let latestPostDateAsString = 'LATEST POST: ' + latestPostDate + '|'
-      fs.appendFile('comments.txt', latestPostDateAsString, (err) => {
+      fs.appendFile('raw_comments.txt', latestPostDateAsString, (err) => {
         if (err) {
           console.log(err)
         }
@@ -166,83 +212,86 @@ async function main_scrape_func(un,pw,celebChoice){
         Once the comments are scraped, they are pushed to the array 'arrayComments' and the array is returned from the function
         The array returned holds the comments from an individual post
       */     
-     async function scrapeCommentsFromPost (driver) {   
+    async function scrapeCommentsFromPost (driver) {   
 
-        let arrayComments = new Array(); //array to hold date and comments from individual post
-        
-       //clicks '+' to load more another set of comments -> (driver,numOfCommentSets)
-        await loadMore(driver,20); //!!!!!!!!!!!!!! *****&*&*&*&*&*&&&*&*** ADJUST NUM OF COMMENT SETS TO GET HERE!! !!!!!!!!!!!!!! *****&*&*&*&*&*&&&*&*** //
+      let arrayComments = new Array(); //array to hold date and comments from individual post
+      
+      //clicks '+' to load more another set of comments -> (driver,numOfCommentSets)
+      await loadMore(driver,20); //!!!!!!!!!!!!!! ADJUST NUM OF COMMENT SETS TO GET HERE!! !!!!!!!!!!!!!!
 
-        //**targeting list of comments UL class: 'XQXOT pxf-y' , this returns a web element promise
-        let commentListRootPromise = await driver.findElement(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul'));
-        
-        //** Returns an array of promises -specifically getting all elements that ar just Mr508, these are the comments */
-        let commentListChildren = await commentListRootPromise.findElements(By.className('Mr508'))
+      //**targeting list of comments UL class: 'XQXOT pxf-y' , this returns a web element promise
+      let commentListRootPromise = await driver.findElement(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul'));
+      
+      //** Returns an array of promises -specifically getting all elements that are just Mr508, these are the comments */
+      let commentListChildren = await commentListRootPromise.findElements(By.className('Mr508'))
 
-       
-        /**Iterate each Mr508, find span, and extract inner text, this is the pure comment text, 
-          then push to arrayComments */
-        for(i=0;i<commentListChildren.length;i++){
-          //**get span section of 508 to then get text from span using 'innerText' NEED TO DO THIS FOR EACH 508 element
-            let spanText508 = await commentListChildren[i].findElement(By.css('.C4VMK > span'))
-          //**then get innerText
-            let innerText = await spanText508.getAttribute('innerText').then((text)=>{
-                //console.log('this is just the text: '+ text) -FOR TESTING
-                //innerText = text; FOR TESTING
-                return text
-            })
-            //console.log('this is innnerText: ' + innerText)- FOR TESTING
-            arrayComments.push(innerText)
-        }
-       
-        //console.log('m length is '+ arrayComments.length)
-        //console.log('this is arrayComments contents: ' + arrayComments) //checking of of array contents
-        
-        return arrayComments;
-    }
+      
+      /**Iterate each Mr508, find span, and extract inner text, this is the pure comment text, 
+        then push to arrayComments */
+      for(i=0;i<commentListChildren.length;i++){
+        //**get span section of 508 to then get text from span using 'innerText' NEED TO DO THIS FOR EACH 508 element
+          let spanText508 = await commentListChildren[i].findElement(By.css('.C4VMK > span'))
+        //**then get innerText
+          let innerText = await spanText508.getAttribute('innerText').then((text)=>{
+              //console.log('this is just the text: '+ text) -FOR TESTING
+              //innerText = text; FOR TESTING
+              return text
+          })
+          //console.log('this is innnerText: ' + innerText)- FOR TESTING
+          arrayComments.push(innerText)
+      }
+      
+      //console.log('m length is '+ arrayComments.length)
+      //console.log('this is arrayComments contents: ' + arrayComments) //checking of of array contents
+      
+      return arrayComments;
+  }
 //--------------------------------------------------------------  
 //WRITE COMMENTS FROM ARRAYCOMMENTS TO FILE
-    function writeToFile(comments){
-      comments.forEach((element)=>{
-        elementSpace = element + ', '
-          fs.appendFile('comments.txt',elementSpace,(err)=>{
-            if(err){
-              console.log('error')
-            }
-          })
+  function writeToFile(comments){
+    comments.forEach((element)=>{
+      elementSpace = element + ', '
+        fs.appendFile('raw_comments.txt',elementSpace,(err)=>{
+          if(err){
+            console.log('error')
+          }
         })
-        console.log(chalk.red(':::::COMMENTS WRITTEN TO FILE::::::'))
-     }
+      })
+      console.log(chalk.red(':::::COMMENTS WRITTEN TO FILE::::::'))
+    }
 //------------------------------------------------------------------
 //==================================================================
 
-  /** function that clicks next arrow to get next post and begin scrape again */
-    async function nextPost (driver){
-      let nextPostArrow = await driver.findElement(By.css('body > div._2dDPU.CkGkG > div.EfHg9 > div > div > a._65Bje.coreSpriteRightPaginationArrow'))
-      await driver.sleep(2500)
-      nextPostArrow.click();
-      console.log(chalk.red(':::::GOING TO NEXT POST::::::'))
-    }
-    /* this alternate version of nextPost using the RIGHT arrow key to visit next post in case the right post arrow is not located*/
-      // async function nextPost2(driver){
-      //   await driver.sleep(2500)
-      //   driver.sendKeys(Key.RIGHT)
-      // console.log(chalk.red(':::::GOING TO NEXT POST::::::'))
-      // }
 
-    /** Load more comments on post */
-  async function loadMore(driver,commentSets){
-      i = 0;
-      while(i < commentSets){
-        await driver.sleep(2000)
-        const loadMore = await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul > li > div')),10000)
-        loadMore.click()
-        i++;
-      }
-      console.log(chalk.red(':::::LOADING COMMENTS::::::'))
+// POST NAVIGATION FUNCTIONS - clicking to next post and clicking to load more comments
+
+/** function that clicks next arrow to get next post and begin scrape again */
+  async function nextPost (driver){
+    let nextPostArrow = await driver.findElement(By.css('body > div._2dDPU.CkGkG > div.EfHg9 > div > div > a._65Bje.coreSpriteRightPaginationArrow'))
+    await driver.sleep(2500)
+    nextPostArrow.click();
+    console.log(chalk.red(':::::GOING TO NEXT POST::::::'))
+  }
+  /* this alternate version of nextPost using the RIGHT arrow key to visit next post in case the right post arrow is not located*/
+    // async function nextPost2(driver){
+    //   await driver.sleep(2500)
+    //   driver.sendKeys(Key.RIGHT)
+    // console.log(chalk.red(':::::GOING TO NEXT POST::::::'))
+    // }
+
+  /** Load more comments on post */
+async function loadMore(driver,commentSets){
+    i = 0;
+    while(i < commentSets){
+      await driver.sleep(2000)
+      const loadMore = await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul > li > div')),10000)
+      loadMore.click()
+      i++;
     }
+    console.log(chalk.red(':::::LOADING COMMENTS::::::'))
+  }
 //=================================================================
-/** CORE APP FUNCTIONALITY */
+/** MAIN FUNCTION TO START WHOLE SCRAPING PROCESS */
 
  async function runScraper(UN,PW,celebChoice){
     let returnedComments = await main_scrape_func(UN,PW,celebChoice)
@@ -256,6 +305,9 @@ runScraper(UN,PW,celebChoice)
 
 //======================================================
 
+
+
+//=====================================================
 
 module.exports = {
     runScraper: runScraper,
