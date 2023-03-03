@@ -12,7 +12,7 @@ const express = require('express')
 const e = require('express');
 
 const fs = require('fs').promises
-const emojiStrip = require('emoji-strip');
+
 
 
 const { until, promise } = require('selenium-webdriver');
@@ -57,54 +57,54 @@ app.get('/',(req,res)=>{
 app.get('/search',(req,res)=>{
     
 
-            const celebHandle = req.query.celebhandle
+    const celebHandle = req.query.celebhandle
 
-            console.log(typeof(celebHandle))
-            const celebChoice = (celebHandle.split(/[@]/))[1]
-            mainDemo(celebHandle)
+    console.log(typeof(celebHandle))
+    const celebChoice = (celebHandle.split(/[@]/))[1]
+    mainDemo(celebHandle)
 
-            async function mainDemo(celebHandle){
-                let needNewScrape = await dateCompTest(celebHandle)
-                console.log(needNewScrape)
-                if(needNewScrape){
-                    console.log(chalk.red('::::Info outdated, Beginning New Scrape and Sentiment Analysis::::'))
+    async function mainDemo(celebHandle){
+        let needNewScrape = await dateCompTest(celebHandle)
+        console.log(needNewScrape)
+        if(needNewScrape){
+            console.log(chalk.red('::::Info outdated, Beginning New Scrape and Sentiment Analysis::::'))
 
-                    let scrapedComments = await getAndProcessComments(UN,PW,celebChoice)
-                    let cleanedComments = cleanComments(scrapedComments)
-                    let results = await AI.runAI(cleanedComments)
+            let scrapedComments = await getAndProcessComments(UN,PW,celebChoice)
+            let cleanedComments = cleanComments(scrapedComments)
+            let results = await AI.runAI(cleanedComments)
 
-                    //destructure returned AI results object
-                    let NegativeSentimentRating = results['toxicPercentage']
-                    let PositiveSentimentRating = results['nonToxicPercentage']
-                    let unclassified = results['unclassifiedComments']
-                    let toxicReducedArray = results['toxicReduced']
-                    let nonToxicReducedArray = results['nonToxicReduced']
-                        console.log('Toxic percentage: ' + NegativeSentimentRating)
-                        console.log('Non Toxic Percentage: ' + PositiveSentimentRating)
-                        console.log('Unclassified count: ' + unclassified)
-                        console.log('toxicReducedArr' + toxicReducedArray)
-                        console.log('nonToxicReducedArr' + nonToxicReducedArray)
+            //destructure returned AI results object
+            let NegativeSentimentRating = results['toxicPercentage']
+            let PositiveSentimentRating = results['nonToxicPercentage']
+            let unclassified = results['unclassifiedComments']
+            let toxicReducedArray = results['toxicReduced']
+            let nonToxicReducedArray = results['nonToxicReduced']
+                console.log('Toxic percentage: ' + NegativeSentimentRating)
+                console.log('Non Toxic Percentage: ' + PositiveSentimentRating)
+                console.log('Unclassified count: ' + unclassified)
+                console.log('toxicReducedArr' + toxicReducedArray)
+                console.log('nonToxicReducedArr' + nonToxicReducedArray)
 
-                    //get last post date from file:
-                    let lastPostDate = await getDateFromFile()
-                    console.log(lastPostDate)
+            //get last post date from file:
+            let lastPostDate = await getDateFromFile()
+            console.log(lastPostDate)
 
-                    //update celeb record with new scrape data
-                    updateRecord(celebHandle,NegativeSentimentRating,PositiveSentimentRating,lastPostDate)
-                     res.send(JSON.stringify(results))   
+            //update celeb record with new scrape data
+            updateRecord(celebHandle,NegativeSentimentRating,PositiveSentimentRating,lastPostDate)
+                res.send(JSON.stringify(results))   
 
-                } else {
-                    let celebInfo = await getCelebInfoFromDB(celebHandle)
-                    res.send(celebInfo)
-                    // console.log(celebInfo)
-                    // res.send('object')
-                    //const response = {}
-                }
-                
-                //clear file at end
-                clearCommentsFile('comments.txt')
-            }
-        })
+        } else {
+            let celebInfo = await getCelebInfoFromDB(celebHandle)
+            res.send(celebInfo)
+            // console.log(celebInfo)
+            // res.send('object')
+            //const response = {}
+        }
+        
+        //clear file at end
+        clearCommentsFile('comments.txt')
+    }
+})
 
         
     
