@@ -57,7 +57,7 @@ async function element_status(element_name,element){
   if (element) {
     // If element is found, log its details
     element_details = {
-      element_name,
+      elementName: element_name,
       TagName: await element.getTagName(),
       ID: await element.getAttribute('id'),
       Class: await element.getAttribute('class'),
@@ -67,9 +67,34 @@ async function element_status(element_name,element){
     console.log(chalk.green('-------------------------'))
   } else {
     // If element is not found, log a message
-    console.log(chalk.red('Element not found'));
+    console.log(chalk.red('Element not found' + element_name));
   }
 }
+
+// ====================================
+
+  async function find_by_text (element_type,element_text){
+    let elements = []
+    let element;
+    if (element_type){
+      try{
+        element = await driver.findElement(By.xpath(`//'${element_type}'[contains(text(),'${element_text}'"])`))
+      }
+      catch(error){
+        console.log(error)
+        element = await driver.findElements(By.xpath(`//*[contains(text(),'${element_text}'"])`))
+      }
+    }
+      if (element){
+        return element
+      } else if (elements) {
+        return elements
+      } else {
+        return 'Element with ' + element_text + 'Not Found'
+      }
+  }
+
+// ===================================
 
 
 
@@ -96,12 +121,12 @@ async function main_scrape_func(un,pw,celebChoice){
       
       const loginForm = await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
       element_status('loginform',loginForm)
-      // const U_name = await driver.wait(until.elementLocated(By.name('username'),2000))
-      // element_status(U_name)
-      // U_name.sendKeys(un)
-      // const p_word = await driver.wait(until.elementLocated(By.name('password')),2000);
-      // element_status(p_word)
-      // p_word.sendKeys(pw)
+      const U_name = await driver.wait(until.elementLocated(By.name('username'),2000))
+      element_status(U_name)
+      U_name.sendKeys(un)
+      const p_word = await driver.wait(until.elementLocated(By.name('password')),2000);
+      element_status(p_word)
+      p_word.sendKeys(pw)
       
       // loginButton.click();
       //*[@id="loginForm"]/div/div[3]/button/div
