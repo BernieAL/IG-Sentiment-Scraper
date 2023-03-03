@@ -53,14 +53,18 @@ let comments = []
 
 
 */
-async function element_status(element){
+async function element_status(element_name,element){
   if (element) {
     // If element is found, log its details
-    console.log(chalk.green('Element found: ' + Object.keys(arguments)));
-    console.log(chalk.green('Tag name:', await element.getTagName()));
-    console.log(chalk.green('Id:', await element.getAttribute('id')));
-    console.log(chalk.green('Class:', await element.getAttribute('class')));
-    console.log(chalk.green('Text:', await element.getText()));
+    element_details = {
+      element_name,
+      TagName: await element.getTagName(),
+      ID: await element.getAttribute('id'),
+      Class: await element.getAttribute('class'),
+      Text: await element.getText()
+    }
+    console.log(chalk.green(JSON.stringify(element_details)))
+    console.log(chalk.green('-------------------------'))
   } else {
     // If element is not found, log a message
     console.log(chalk.red('Element not found'));
@@ -91,7 +95,7 @@ async function main_scrape_func(un,pw,celebChoice){
       // const loginButton = await driver.findElement(until.elementLocated(By.xpath("//button[contains(text(),'Log in')")),8000);
       
       const loginForm = await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
-      element_status(loginForm)
+      element_status('loginform',loginForm)
       // const U_name = await driver.wait(until.elementLocated(By.name('username'),2000))
       // element_status(U_name)
       // U_name.sendKeys(un)
