@@ -73,31 +73,6 @@ async function element_status(element_name,element){
 
 // ====================================
 
-  async function find_by_text (element_type,element_text){
-    let elements = []
-    let element;
-    if (element_type){
-      try{
-        element = await driver.findElement(By.xpath(`//'${element_type}'[contains(text(),'${element_text}'"])`))
-      }
-      catch(error){
-        console.log(error)
-        element = await driver.findElements(By.xpath(`//*[contains(text(),'${element_text}'"])`))
-      }
-    }
-      if (element){
-        return element
-      } else if (elements) {
-        return elements
-      } else {
-        return 'Element with ' + element_text + 'Not Found'
-      }
-  }
-
-// ===================================
-
-
-
 async function main_scrape_func(un,pw,celebChoice){
       let driver = await new Builder().forBrowser('chrome').build();
     
@@ -119,15 +94,24 @@ async function main_scrape_func(un,pw,celebChoice){
       // // const loginButton = await driver.wait(until.elementLocated(By.css('#loginForm > div > div:nth-child(3) > button')),5000);
       // const loginButton = await driver.findElement(until.elementLocated(By.xpath("//button[contains(text(),'Log in')")),8000);
       
-      const loginForm = await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
-      element_status('loginform',loginForm)
-      const U_name = await driver.wait(until.elementLocated(By.name('username'),2000))
-      element_status(U_name)
-      U_name.sendKeys(un)
-      const p_word = await driver.wait(until.elementLocated(By.name('password')),2000);
-      element_status(p_word)
-      p_word.sendKeys(pw)
+      // const loginForm =  await find_by_text(null,'Log in',driver)
+      // //await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
+      // // element_status('loginform',loginForm)
       
+      // const U_name = await find_by_text(null,'username',driver)
+      // await driver.wait(until.elementLocated(By.name('username'),2000))
+      // // element_status(U_name)
+      // U_name.sendKeys(un)
+      
+      const p_word = await find_by_text('input','Password',driver)
+      //await driver.wait(until.elementLocated(By.name('password')),2000);
+      // element_status(p_word)
+      
+      
+      await p_word.sendKeys(pw)
+      driver.sleep(10000)
+
+
       // loginButton.click();
       //*[@id="loginForm"]/div/div[3]/button/div
 
@@ -334,7 +318,45 @@ runScraper(UN,PW,celebChoice)
 
 //======================================================
 
+/* 
+using replace() to bind actual value to placeholder at runtime. {} used to inject vars into string
+element_type -> is it a button, input, a, div etc
+element_text -> specific text of the element, Ex. Login button has the text 'Login'
+*/
 
+async function find_by_text (element_type,element_text,driver){
+  // let elements = []
+
+  let actual_xpath;
+  
+
+  // if element_type arg provided, include in xpath, else omit and use element_text only
+  // if (element_type){
+    const xpath = "//{0}[contains(text(), '{1}')]"
+    actual_xpath = xpath.replace('{0}',element_type).replace('{1}',element_text)
+  
+  // } else {
+  //   xpath = `//*[contains(text(),'{}')]`
+  //   actual_xpath = xpath.replace('{}',element_text)
+  // }
+
+
+  let found_element;
+    try{
+      found_element = await driver.wait(until.elementLocated(By.xpath(actual_xpath)),1000)
+      console.log(chalk.green('FOUND ELEMENT: ' + element_text))
+      console.log(chalk.green(JSON.stringify(found_element)))
+      console.log(chalk.green('-------------------------'))
+      return found_element
+    }
+    catch(error){
+      console.log(chalk.red('ELEMENT NOT FOUND: ' + element_text + '-\n' + error))
+      return 
+    }
+    
+    
+
+  }
 
 //=====================================================
 
