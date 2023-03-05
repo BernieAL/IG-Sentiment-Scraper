@@ -98,18 +98,18 @@ async function main_scrape_func(un,pw,celebChoice){
       // //await driver.wait(until.elementLocated(By.css('#loginForm'),2000))
       // // element_status('loginform',loginForm)
       
-      // const U_name = await find_by_text(null,'username',driver)
+      const U_name = await find_by_text('input','Phone number, username, or email',driver)
       // await driver.wait(until.elementLocated(By.name('username'),2000))
-      // // element_status(U_name)
-      // U_name.sendKeys(un)
+      // element_status(U_name)
+      await U_name.sendKeys(un)
       
-      const p_word = await find_by_text('input','Password',driver)
-      //await driver.wait(until.elementLocated(By.name('password')),2000);
-      // element_status(p_word)
+      // const p_word = await find_by_text('input','Password',driver)
+      // //await driver.wait(until.elementLocated(By.name('password')),2000);
+      // // element_status(p_word)
       
       
-      await p_word.sendKeys(pw)
-      driver.sleep(10000)
+      // await p_word.sendKeys(pw)
+      // driver.sleep(10000)
 
 
       // loginButton.click();
@@ -332,27 +332,59 @@ async function find_by_text (element_type,element_text,driver){
 
   // if element_type arg provided, include in xpath, else omit and use element_text only
   // if (element_type){
-    const xpath = "//{0}[contains(text(), '{1}')]"
-    actual_xpath = xpath.replace('{0}',element_type).replace('{1}',element_text)
-  
-  // } else {
-  //   xpath = `//*[contains(text(),'{}')]`
-  //   actual_xpath = xpath.replace('{}',element_text)
-  // }
-
-
-  let found_element;
+    const xpaths = [
+      `//{0}[contains(@aria-label, '{1}')]`,
+      `//{0}[contains(@placeholder, '{1}')]`,
+      `//{0}[contains(@id, '{1}')]`,
+      `//{0}[contains(@name, '{1}')]`,
+      `//{0}[contains(@value, '{1}')]`,
+      `//{0}[contains(text(), '{1}')]`,
+      `//{0}[contains(@title, '{1}')]`,
+      `//{0}[contains(@alt, '{1}')]`,
+      `//{0}[contains(@href, '{1}')]`,
+      `//{0}[contains(@class, '{1}')]`,
+      `//{0}[contains(@onclick, '{1}')]`
+    ];
+    
+    let found_element;
+    let found_elements = []
+    const actual_xpaths = xpaths.map(xpath => xpath.replace('{0}', element_type).replace('{1}', element_text));
+    
+    
+   
     try{
-      found_element = await driver.wait(until.elementLocated(By.xpath(actual_xpath)),1000)
-      console.log(chalk.green('FOUND ELEMENT: ' + element_text))
-      console.log(chalk.green(JSON.stringify(found_element)))
+      found_elements = await driver.wait(until.elementsLocated(By.xpath(actual_xpaths.join(' | '))));
+      
+      for(let i = 0;i<found_elements.length;i++){
+        element = found_elements[i]
+        const ariaLabel = await element.getAttribute('aria-label');
+        
+
+        if (ariaLabel === element_text or vlaue or text or etc) {
+          console.log(chalk.green(`Found element with aria-label: ${ariaLabel}`));
+          found_element = found_elements[i]
+          break;
+        }
+      }
+      // console.log(chalk.green('FOUND ELEMENT: ' + element_text))
+      // console.log(chalk.green(JSON.stringify(found_element)))
+      
+      // element_details = {
+      //   TagName: await found_element.getTagName(),
+      //   ID: await found_element.getAttribute('id'),
+      //   Class: await found_element.getAttribute('class'),
+      //   Text: await found_element.getText()
+      // }
+      
       console.log(chalk.green('-------------------------'))
       return found_element
     }
     catch(error){
-      console.log(chalk.red('ELEMENT NOT FOUND: ' + element_text + '-\n' + error))
+      console.log(chalk.red('ELEMENT NOT FOUND: ' + element_text + '-' + error))
       return 
     }
+
+    
     
     
 
