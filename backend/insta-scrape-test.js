@@ -248,8 +248,9 @@ async function main_scrape_func(un,pw,celebChoice){
       //extract span text from each comment element in comment_elements array & write to arrayComments
       for(i=0;i<comment_elements.length;i++){
           element = comment_elements[i]
-          nested_span = await element.findElement(By.css('span'))
-          nested_span_text = await nested_span.getAttribute('text')
+          // nested_span = await element.findElement(By.css('span'))
+          nested_span_text = await element.getText()
+          // await element.getAttribute('text')
           console.log('spanText for comment + ' + nested_span_text)
           arrayComments.push(nested_span_text)
       }
