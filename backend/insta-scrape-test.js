@@ -248,9 +248,7 @@ async function main_scrape_func(un,pw,celebChoice){
       //extract span text from each comment element in comment_elements array & write to arrayComments
       for(i=0;i<comment_elements.length;i++){
           element = comment_elements[i]
-          // nested_span = await element.findElement(By.css('span'))
-          nested_span_text = await element.getText()
-          // await element.getAttribute('text')
+          nested_span_text = await element.findElement(By.css('span')).getText()
           console.log('spanText for comment + ' + nested_span_text)
           arrayComments.push(nested_span_text)
       }
@@ -272,15 +270,15 @@ async function main_scrape_func(un,pw,celebChoice){
 async function writeToFile(comments){
   console.log(chalk.red('this is comments being printed from writeToFile function ' + comments))
   await comments.forEach((element)=>{
-      elementSpace = element + ', '
-        fs.appendFile('raw_comments.txt',elementSpace,(err)=>{
+        elementSpace = element + ','
+        fs.appendFile('raw_comments.txt',(elementSpace + '\n'),(err)=>{
           if(err){
-            console.log('error')
+            console.log('ERROR IN WRITING COMMENTS TO FILE')
           }
         })
       })
       console.log(chalk.red(':::::COMMENTS WRITTEN TO FILE::::::'))
-    }
+}
 //------------------------------------------------------------------
 //==================================================================
 
@@ -288,7 +286,7 @@ async function writeToFile(comments){
 // POST NAVIGATION FUNCTIONS - clicking to next post and clicking to load more comments
 
 /** function that clicks next arrow to get next post and begin scrape again */
-  async function nextPost (driver){
+async function nextPost (driver){
     
     try {
       // nextPostArrow_locator1 = 'body > div._2dDPU.CkGkG > div.EfHg9 > div > div > a._65Bje.coreSpriteRightPaginationArrow'
@@ -302,7 +300,7 @@ async function writeToFile(comments){
     } catch (error) {
       console.log("Error from NextPost function" + error)
     }
-  }
+}
 
   /* this alternate version of nextPost using the RIGHT arrow key to visit next post in case the right post arrow is not located*/
   // async function nextPost2(driver){
@@ -320,9 +318,9 @@ async function loadMore(driver,commentSets){
         // const loadMore = await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul > li > div')),10000)
         const loadMore = await findBy_type_and_text('*','Load more comments',driver)
         loadMore.click()
+        console.log(chalk.red(':::::LOADING COMMENTS::::::'))
         i++;
       }
-      console.log(chalk.red(':::::LOADING COMMENTS::::::'))
     } catch (error) {
       console.log("Error from LoadMore function" + error)
     }
@@ -337,7 +335,7 @@ async function loadMore(driver,commentSets){
  
  var UN ='sentiscrape';
  var PW ='kirklandExpo';
- let celebChoice =  'jakepaul'
+ let celebChoice =  'cristiano'
 runScraper(UN,PW,celebChoice)
 
 //======================================================
@@ -386,16 +384,10 @@ async function findBy_type_and_text (element_type,element_text,driver){
       console.log(chalk.red('ELEMENT NOT FOUND: ' + element_text + '-' + error))
       return 
     }
-
-    
-    
-    
-
-  }
+}
 
 //=====================================================
 
 module.exports = {
     runScraper: runScraper,
-    
 }
