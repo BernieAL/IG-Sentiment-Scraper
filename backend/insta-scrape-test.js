@@ -43,16 +43,12 @@ let comments = []
 
 // ====================================
 
-async function main_scrape_func(un,pw,celebChoice){
+  async function main_scrape_and_write_func(un,pw,celebChoice){
       let driver = await new Builder().forBrowser('chrome').build();
     
       await driver.get('https://instagram.com');
       await driver.sleep(2000)
-
-
-     
-
-            
+           
       const username_input = await findBy_type_and_text('input','Phone number, username, or email',driver)
       // await driver.wait(until.elementLocated(By.name('username'),2000))
       // element_status(U_name)
@@ -97,47 +93,53 @@ async function main_scrape_func(un,pw,celebChoice){
       console.log(chalk.red(':::::DONE::::::'))
       // comments.unshift(latestPostDateAsString)
       return comments;
-}
+  }
 //=================================================================================================
      
 
-// HELPER FUNCTIONS BELOW
+
 
     // This is driver function for all the scraper functions
     //while counter less than desired amount of posts to scrape comments from   
-    async function scrapeCommentsDriver(num_posts_to_visit){
-        let i = 0
-        while(i < num_posts_to_visit){
-         
-          let postNum = 'POST NUM: ' + i
-          //array of scraped comments being returned from postComments
-          let postComments = await scrapeCommentsFromPost(driver)
-         
-          //concat post num with array of extract comments - for labeling -> post 1~~~~~: + array of comments
-          let post_num_label_for_comments = `${postNum} + ~~~~~: \n` + postComments 
+  async function scrapeCommentsDriver(num_posts_to_visit){
+      
+      let i = 0
+      while(i < num_posts_to_visit){
+        
+        let postNum = 'POST NUM: ' + i
+        //array of scraped comments being returned from postComments
+        let postComments = await scrapeCommentsFromPost(driver)
+        console.log('scrapeCommentsDriver -> postComments array of web element' + postComments)
+        
+        //concat post num with array of extract comments - for labeling -> post 1~~~~~: + array of comments
+        let post_num_label_for_comments = `${postNum} + ~~~~~: \n` + postComments 
 
-          let tempArr = [post_num_label_for_comments]
-          comments = tempArr
-          driver.sleep(Math.random() * 2000)
-          console.log('Comments for scrapeComments func: ' + comments)
-          
-          //write current extracted comments to file
-          await writeCommentsToFile(comments)
-          
-          
-          //go to next post
-          nextPost(driver)
-          i++;
-        }
-    }
+        let tempArr = [post_num_label_for_comments]
+        comments = tempArr
+        driver.sleep(Math.random() * 2000)
+        console.log('Comments for scrapeComments func: ' + comments)
+        
+        //write current extracted comments to file
+        await writeCommentsToFile(comments)
+        
+        
+        //go to next post
+        nextPost(driver)
+        i++;
+      }
+  }
 
 //===================================================================
-     /* READ
-        This function is called for each post, it targets and scrapes the comments
-        Instagram loads 12 comments at a time -> this function takes an argument specifying how many sets of comments to load and thus scrape
-        Once the comments are scraped, they are pushed to the array 'arrayComments' and the array is returned from the function
-        The array returned holds the comments from an individual post
-      */     
+
+
+// HELPER FUNCTIONS SECTION
+
+  /* READ
+    This function is called for each post, it targets and scrapes the comments
+    Instagram loads 12 comments at a time -> this function takes an argument specifying how many sets of comments to load and thus scrape
+    Once the comments are scraped, they are pushed to the array 'arrayComments' and the array is returned from the function
+    The array returned holds the comments from an individual post
+  */     
    
   async function scrapeCommentsFromPost (driver) {   
 
@@ -155,7 +157,7 @@ async function main_scrape_func(un,pw,celebChoice){
       
       //get all comment elements on page and put in array
       let comment_elements = await driver.findElements((By.className('_a9ym')),2000);
-      console.log(comment_elements)
+      console.log('COMMENT ELEMENTS ARRAY: ' + comment_elements + '---------------------------------')
       
       
       let nested_span_text = ''
@@ -169,15 +171,13 @@ async function main_scrape_func(un,pw,celebChoice){
       console.log(arrayComments)
 
     } catch (error){
-      console.log('Error in scrape comments from post method' + error)
+      console.log('Error in scrapeCommentsFromPost() ' + error  + '---------------------------------')
     }
 
     return arrayComments;
   }
 
-//=======================================================
-
-//--------------------------------------------------------------  
+//========================
 
 //WRITE COMMENTS FROM ARRAYCOMMENTS Array TO FILE
 async function writeCommentsToFile(comments){
@@ -192,12 +192,12 @@ async function writeCommentsToFile(comments){
       })
       console.log(chalk.red(':::::COMMENTS WRITTEN TO FILE::::::'))
 }
-//------------------------------------------------------------------
+
 //==================================================================
 
 
 // POST NAVIGATION FUNCTIONS - clicking to next post and clicking to load more comments
-
+//========================
 /** function that clicks next arrow to get next post and begin scrape again */
 async function nextPost (driver){
     
@@ -215,7 +215,7 @@ async function nextPost (driver){
     }
 }
 
-
+//========================
 // Loads more Comments from post
 async function loadMore(driver,commentSets){
     try {
@@ -233,7 +233,7 @@ async function loadMore(driver,commentSets){
     }
   }
 
-
+//========================
   async function findBy_type_and_text (element_type,element_text,driver){
     // let elements = []
   
@@ -273,7 +273,8 @@ async function loadMore(driver,commentSets){
         return 
       }
   }
-  
+
+//========================
   //this function writes celeb name, current date, and data of last post as file header
   async function get_latest_post_date(driver){
   
@@ -286,7 +287,7 @@ async function loadMore(driver,commentSets){
   
   }
   
-  
+//======================== 
   /*
     This function is called for each element we attempt to find
     If element is found, it will display - FOUND element_name
@@ -322,29 +323,21 @@ async function loadMore(driver,commentSets){
     }
   }
   
-//=================================================================
+//========================
 /** MAIN FUNCTION TO START WHOLE SCRAPING PROCESS */
 
  async function runScraper(UN,PW,celebChoice){
-    let returnedComments = await main_scrape_func(UN,PW,celebChoice)
+    let returnedComments = await main_scrape_and_write_func(UN,PW,celebChoice)
     return returnedComments
  } 
  
  var UN ='sentiscrape';
  var PW ='kirklandExpo';
  let celebChoice =  'cristiano'
-runScraper(UN,PW,celebChoice)
 
-//======================================================
+ runScraper(UN,PW,celebChoice)
 
-/* 
-using replace() to bind actual value to placeholder at runtime. {} used to inject vars into string
-element_type -> is it a button, input, a, div etc
-element_text -> specific text of the element, Ex. Login button has the text 'Login'
-*/
-
-
-
+//=====================================================
 //=====================================================
 
 module.exports = {
