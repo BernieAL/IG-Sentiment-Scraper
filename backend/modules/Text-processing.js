@@ -1,6 +1,6 @@
 
 const celebRecord = require('../models/celebRecordSchema')
-const dbFunc = require('./DB-functions')
+// const dbFunc = require('./DB-functions')
 const emojiStrip = require('emoji-strip');
 // const dateFunc = require('./date-functions')
 const chalk = require('chalk')
