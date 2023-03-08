@@ -37,14 +37,13 @@ let comments = []
 
 
 //ALTERNATE LOGIN CREDENTIALS to use in case other gets burnt
-//username.sendKeys('bhurnalcodes') 
-//password.sendKeys('s15koukie39') 
+  //username.sendKeys('bhurnalcodes') 
+  //password.sendKeys('s15koukie39') 
 
 
 // ====================================
 
-  async function main_scrape_and_write_func(un,pw,celebChoice){
-      let driver = await new Builder().forBrowser('chrome').build();
+  async function main_scrape_and_write_func(un,pw,celebChoice,driver){
     
       await driver.get('https://instagram.com');
       await driver.sleep(2000)
@@ -88,38 +87,41 @@ let comments = []
       await driver.sleep(2000)
       const latestPost = await driver.wait(until.elementLocated(By.className('_aabd _aa8k _aanf')))
       await latestPost.click()
-
-      await scrapeCommentsDriver(1) //POST NUM HERE !!! //hardcoded number of posts to get (2) chosen for testing, should be dynamically fed
+      
+      await scrapeCommentsDriver(1,driver) //POST NUM HERE !!! //hardcoded number of posts to get (2) chosen for testing, should be dynamically fed
       console.log(chalk.red(':::::DONE::::::'))
       // comments.unshift(latestPostDateAsString)
       return comments;
   }
-//=================================================================================================
+
+  //=================================================================================================
      
 
 
 
     // This is driver function for all the scraper functions
     //while counter less than desired amount of posts to scrape comments from   
-  async function scrapeCommentsDriver(num_posts_to_visit){
+  async function scrapeCommentsDriver(num_posts_to_visit,driver){
       
+      //write file header to file
+      writeFileHeader(driver)
       let i = 0
       while(i < num_posts_to_visit){
         
-        let postNum = 'POST NUM: ' + i
+        //current post num we are on - using as preceding header for comments to be scraped 
+        let postNum = 'POST NUM: ' + i + '~~~~~~~ \n'
+        
         //array of scraped comments being returned from postComments
         let postComments = await scrapeCommentsFromPost(driver)
-        console.log('scrapeCommentsDriver -> postComments array of web element' + postComments)
+        console.log('scrapeCommentsDriver -> postComments - array of scraped comments from current post' + postComments)
         
-        //concat post num with array of extract comments - for labeling -> post 1~~~~~: + array of comments
-        let post_num_label_for_comments = `${postNum} + ~~~~~: \n` + postComments 
-
-        let tempArr = [post_num_label_for_comments]
+        //concat post num with array of extract comments - for labeling -> 'post 1~~~~~:' + array of comments
+        let tempArr =  postNum.concat(postComments.join(","))
         comments = tempArr
         driver.sleep(Math.random() * 2000)
-        console.log('Comments for scrapeComments func: ' + comments)
+        console.log('scrapeCommentsDriver -> Comments for scrapeComments func: ' + comments)
         
-        //write current extracted comments to file
+        //write current extracted array of comment to file
         await writeCommentsToFile(comments)
         
         
@@ -132,15 +134,35 @@ let comments = []
 //===================================================================
 
 
-// HELPER FUNCTIONS SECTION
+// HELPER FUNCTIONS SECTION  
 
-  /* READ
+  //compose header (celeb name, todays date, latestPostDate), and write to file         
+  async function writeFileHeader(celebChoice,driver) {
+    let userNameAsString = 'Username: ' + celebChoice;
+    let latestPostDate =  await get_latest_post_date(driver);
+  
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    const day = ('0' + today.getDate()).slice(-2);
+    const currentDate_as_string = `${year}-${month}-${day}`; // "2023-03-08"
+  
+    file_header = `target:${userNameAsString} | curr date:${currentDate_as_string} | latest post date:${latestPostDate} `;
+    //Write date of latest post to file next to celeb name
+    fs.appendFile('raw_comments.txt', file_header, (err) => {
+      if (err) {
+        console.log(chalk.red('COULDNT WRITE FILE HEADER TO FILE' + err));
+      }
+    })
+  }     
+    
+  //========================
+   /* READ
     This function is called for each post, it targets and scrapes the comments
     Instagram loads 12 comments at a time -> this function takes an argument specifying how many sets of comments to load and thus scrape
     Once the comments are scraped, they are pushed to the array 'arrayComments' and the array is returned from the function
     The array returned holds the comments from an individual post
   */     
-   
   async function scrapeCommentsFromPost (driver) {   
 
     let arrayComments = new Array(); //array to hold date and comments from individual post
@@ -179,19 +201,21 @@ let comments = []
 
 //========================
 
-//WRITE COMMENTS FROM ARRAYCOMMENTS Array TO FILE
-async function writeCommentsToFile(comments){
-  console.log(chalk.red('this is comments being printed from writeToFile function ' + comments))
-  await comments.forEach((element)=>{
+  //WRITE COMMENTS FROM ARRAYCOMMENTS Array TO FILE
+  async function writeCommentsToFile(comments){
+
+    console.log(chalk.red('this is comments being printed from writeToFile function ' + comments))
+
+    await comments.forEach((element)=>{
         elementSpace = element + ','
         fs.appendFile('raw_comments.txt',(elementSpace + '\n'),(err)=>{
           if(err){
             console.log('ERROR IN WRITING COMMENTS TO FILE')
-          }
+           }
         })
-      })
-      console.log(chalk.red(':::::COMMENTS WRITTEN TO FILE::::::'))
-}
+    })
+    console.log(chalk.red(':::::COMMENTS WRITTEN TO FILE::::::'))
+  }
 
 //==================================================================
 
@@ -199,39 +223,39 @@ async function writeCommentsToFile(comments){
 // POST NAVIGATION FUNCTIONS - clicking to next post and clicking to load more comments
 //========================
 /** function that clicks next arrow to get next post and begin scrape again */
-async function nextPost (driver){
+  async function nextPost (driver){
+      
+      try {
+        // nextPostArrow_locator1 = 'body > div._2dDPU.CkGkG > div.EfHg9 > div > div > a._65Bje.coreSpriteRightPaginationArrow'
+        // nextPostArrow_locator2 = '_aaqg _aaqh'
+        // nextPostArray_locator3 = ''
     
-    try {
-      // nextPostArrow_locator1 = 'body > div._2dDPU.CkGkG > div.EfHg9 > div > div > a._65Bje.coreSpriteRightPaginationArrow'
-      // nextPostArrow_locator2 = '_aaqg _aaqh'
-      // nextPostArray_locator3 = ''
-  
-      let nextPostArrow = await findBy_type_and_text('*','Next',driver)
-      await driver.sleep(2500)
-      nextPostArrow.click();
-      console.log(chalk.red(':::::GOING TO NEXT POST::::::'))
-    } catch (error) {
-      console.log("Error from NextPost function" + error)
-    }
-}
+        let nextPostArrow = await findBy_type_and_text('*','Next',driver)
+        await driver.sleep(2500)
+        nextPostArrow.click();
+        console.log(chalk.red(':::::GOING TO NEXT POST::::::'))
+      } catch (error) {
+        console.log("Error from NextPost function" + error)
+      }
+  }
 
 //========================
-// Loads more Comments from post
-async function loadMore(driver,commentSets){
-    try {
-      i = 0;
-      while(i < commentSets){
-        await driver.sleep(2000)
-        // const loadMore = await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul > li > div')),10000)
-        const loadMore = await findBy_type_and_text('*','Load more comments',driver)
-        loadMore.click()
-        console.log(chalk.red(':::::LOADING COMMENTS::::::'))
-        i++;
+  // Loads more Comments from post
+  async function loadMore(driver,commentSets){
+      try {
+        i = 0;
+        while(i < commentSets){
+          await driver.sleep(2000)
+          // const loadMore = await driver.wait(until.elementLocated(By.css('body > div._2dDPU.CkGkG > div.zZYga > div > article > div.eo2As > div.EtaWk > ul > li > div')),10000)
+          const loadMore = await findBy_type_and_text('*','Load more comments',driver)
+          loadMore.click()
+          console.log(chalk.red(':::::LOADING COMMENTS::::::'))
+          i++;
+        }
+      } catch (error) {
+        console.log("Error from LoadMore function" + error)
       }
-    } catch (error) {
-      console.log("Error from LoadMore function" + error)
     }
-  }
 
 //========================
   async function findBy_type_and_text (element_type,element_text,driver){
@@ -326,16 +350,17 @@ async function loadMore(driver,commentSets){
 //========================
 /** MAIN FUNCTION TO START WHOLE SCRAPING PROCESS */
 
- async function runScraper(UN,PW,celebChoice){
-    let returnedComments = await main_scrape_and_write_func(UN,PW,celebChoice)
+  async function runScraper(UN,PW,celebChoice){
+    let driver = await new Builder().forBrowser('chrome').build();
+    let returnedComments = await main_scrape_and_write_func(UN,PW,celebChoice,driver)
     return returnedComments
- } 
+  } 
  
- var UN ='sentiscrape';
- var PW ='kirklandExpo';
- let celebChoice =  'cristiano'
+  var UN ='sentiscrape';
+  var PW ='kirklandExpo';
+  let celebChoice =  'cristiano'
 
- runScraper(UN,PW,celebChoice)
+  runScraper(UN,PW,celebChoice)
 
 //=====================================================
 //=====================================================
