@@ -1,0 +1,34 @@
+p means page
+
+index
+---App
+    ---navbar
+    ---Home(p)
+         ---Header
+         ---profiles
+            ---celebprofilecard
+    ---analysis(p)
+            ---Chart
+            ---profiledetail
+    ---about(p)
+
+
+
+home page renders profiles
+profiles renders celebprofilecard for each celeb 
+
+when celebprofilecard clicked
+    handleCardClick() calls parent(profiles) callback profileCardClicked 
+    passes it the celebName and handle of the clicked card 
+
+    profileCardClicked
+        calls retrieveCelebData
+
+    retrieveCelebData
+        function that will hit backend for db data on celebname 
+        then route to analyis/celebname with retrieved data passed
+
+
+
+
+    

@@ -1,59 +1,33 @@
 import React, { Component } from 'react'
 import axios from 'axios';
+import Charts from "../components/Charts";
+import { Chart } from 'react-chartjs-2';
+import { useParams } from "react-router-dom";
+import celebRecords from '../data/celebRecords.json'
 
 
-class ProfileDetail extends Component {
-    constructor(props) {
-		super(props)
+//rendered by Analysis
+//this is basic detail info for a specific celebprofile
+export default function ProfileDetail({targetProfile}){
+	
 
-	  this.state = {
-        //posts is subject to change
-      posts: [],
-      errorMsg: ''
-		}
-	}
-
-	componentDidMount() {
-		axios
-        //this is the get request for bernie
-			.get('https://jsonplaceholder.typicode.com/users')
-			.then(response => {
-				console.log(response)
-				this.setState({ posts: response.data })
-			})
-            //if no data then throw an error
-			.catch(error => {
-        console.log(error)
-        this.setState({errorMsg: 'Error retrieving data'})
-			})
-	}
-
-	render() {
-		const { posts, errorMsg } = this.state
-		return (
-			
+    console.log(targetProfile)
+	// //filters postdata to find target celeb
+	// const profiles = celebRecords.filter(profiles => profiles.celebName === targetCeleb);
+	
+	return (
+		<>	
 			<div>
-				List of posts
-                {//example on how to retrieve specific data
-                }
-				{posts.length
-					? posts.map(post => <div key={post.id}>{post.title}</div>)
-          : null}
-        {errorMsg ? 
-        <div>
-            {errorMsg}
-
-			
-        </div> 
-                : null}
-
-				
+				<div key={targetProfile.id}>
+					<img className = "banner" src = {targetProfile.banner} alt = "banner"/>
+					<h1 className = "celebName">{targetProfile.title}</h1>
+					<p className = "description">{targetProfile.content}</p>
+					<a className = "handle" href="">{targetProfile.handle}</a>
+					<p className = "disclaimer">{targetProfile.disclaimer}</p>
+					<img className = "celebPic" src = {targetProfile.img} alt = "celebPic"/>
+				</div>
 			</div>
 
-			
-		)
-	}
+		</>
+	);
 }
-
-
-export default ProfileDetail;
